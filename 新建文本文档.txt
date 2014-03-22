@@ -1,0 +1,177 @@
+//加封面方法
+private void AddAttachedPicture(string FilePath, string MimeType)
+        {
+            AttachedPictureFrame ATP = new AttachedPictureFrame(new FrameFlags(),
+                "", TextEncodings.Ascii, MimeType, AttachedPictureFrame.PictureTypes.Other,
+                GetMemoryStream(FilePath));
+
+            lsbFiles.Items.Add(ATP);
+            lsbFiles.SelectedIndex = lsbFiles.Items.Count - 1;
+
+            InterfacePicture();
+
+            txtDescription.Focus();
+        }
+
+
+//加封面
+private void btnAdd_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog OFD = new OpenFileDialog();
+            OFD.CheckFileExists = true;
+            OFD.Filter = "All Types|*.*";
+            OFD.Title = "Open File";
+            OFD.Multiselect = false;
+            if (OFD.ShowDialog() == DialogResult.OK)
+            {
+                FileInfo File = new FileInfo(OFD.FileName);
+                string Mime = Program.GetMIMEType(File.Extension);
+                if (Mime.StartsWith("image"))
+                    AddAttachedPicture(File.FullName, Mime);
+                else
+                    AddGeneralFile(File.FullName, Mime);
+            }
+        }
+
+
+
+
+//修改标签
+private void frmGeneral_MultiReflectChanges(object sender, EventArgs e)
+        {
+            if (chbContain1.CheckState != CheckState.Indeterminate)
+            {
+                Data.ID3v1Info.HaveTag = chbContain1.Checked;
+                if (chbContain1.Checked)
+                {
+                    if (txt1Track.Text.Length != 0)
+                        Data.ID3v1Info.TrackNumber = Convert.ToByte(txt1Track.Text);
+
+                    if (txt1Title.Text.Length != 0)
+                        Data.ID3v1Info.Title = txt1Title.Text;
+
+                    if (txt2Artist.Text.Length != 0)
+                        Data.ID3v1Info.Artist = txt2Artist.Text;
+
+                    if (txt2Album.Text.Length != 0)
+                        Data.ID3v1Info.Album = txt2Album.Text;
+
+                    if (cmb1Genre.GenreIndex != 255)
+                        Data.ID3v1Info.Genre = Convert.ToByte(cmb1Genre.GenreIndex);
+
+                    if (txt1Year.Text.Length != 0)
+                        Data.ID3v1Info.Year = txt1Year.Text;
+
+                    if (txt1Comment.Text.Length != 0)
+                        Data.ID3v1Info.Comment = txt1Comment.Text;
+                }
+            }
+
+            if (chbContain2.CheckState != CheckState.Indeterminate)
+            {
+                Data.ID3v2Info.HaveTag = chbContain2.Checked;
+                if (chbContain2.Checked)
+                {
+                    if (cmb2Ver.SelectedIndex != -1)
+                        Data.ID3v2Info.SetMinorVersion(Convert.ToInt32(cmb2Ver.Text));
+
+                    if (txt2Track.Text.Length != 0)
+                        Data.ID3v2Info.SetTextFrame("TRCK", txt2Track.Text);
+
+                    if (txt2Set.Text.Length != 0)
+                        Data.ID3v2Info.SetTextFrame("TPOS", txt2Set.Text);
+
+                    if (txt2Title.Text.Length != 0)
+                        Data.ID3v2Info.SetTextFrame("TIT2", txt2Title.Text);
+
+                    if (txt2Artist.Text.Length != 0)
+                        Data.ID3v2Info.SetTextFrame("TPE1", txt2Artist.Text);
+
+                    if (txt2Album.Text.Length != 0)
+                        Data.ID3v2Info.SetTextFrame("TALB", txt2Album.Text);
+
+                    if (cmb2Genre.Genre.Length != 0)
+                        Data.ID3v2Info.SetTextFrame("TCON", cmb2Genre.Genre);
+
+                    if (cmb2Language.Language.Length != 0)
+                        Data.ID3v2Info.SetTextFrame("TLAN", cmb2Language.Language);
+                }
+            }
+        }
+
+//save
+private Hashtable _Tags;
+ID3Info File = (ID3Info)_Tags[FilePath];
+            File.Save(File.ID3v2Info.VersionInfo.Minor);
+
+//打开文件
+ if (ofdOpenMp3.ShowDialog() == DialogResult.OK)
+                foreach (string File in ofdOpenMp3.FileNames)
+                    AddNewFile(File);
+//报错
+try
+            {
+                ID3File = new ID3Info(FilePath, true);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(FilePath + "\nCan't load file. " + ex.Message, "Loading File",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+//重复
+if (_Tags.ContainsKey(FilePath))
+            {
+                if (MessageBox.Show("This file is in list. would you like to reload it ?",
+                    "reloading", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                    MessageBoxDefaultButton.Button2) == DialogResult.No)
+                    return; // exit function
+            }
+_FileListDialog.AddFile(ID3File);
+            _Tags.Remove(FilePath); // remove previous file if was in list
+            _Tags.Add(FilePath, ID3File);
+
+//搜索
+http://mp3.baidu.com/m?tn=baidump3mobile&ssid=&from=&bd_page_type=1&uid=&pu=&f=ms&ct=671088640&lf=&rn=20&lm=0&gate=33&word=
+
+<span class="song_name"><em>七里香</em>  </span><span class="file_size">4.5M</span> <span class="song_special"><strong>周杰伦</strong>《<em>七里香</em>》&nbsp;</span>
+<span class="song_name"><em>一天一天</em> (orchestra ver.)  </span><span class="file_size">4.2M</span> <span class="song_special"><strong><em>bigbang</em></strong>《big show 2009 <em>bigbang</em> live concert live》&nbsp;</span>
+<span class="song_name">(<em>drop</em> <em>dead</em>) <em>beautiful</em>  </span><span class="file_size">3.3M</span> <span class="song_special"><strong><em>britney</em> <em>spears</em>,sabi</strong>《femme fatale》&nbsp;</span>  </a> </li>
+<span class="song_name"><em>rolling</em> <em>in</em> <em>the</em> <em>deep</em>  </span><span class="file_size">3.5M</span> <span class="song_special"><strong><em>adele</em></strong>《<em>the</em> singer, <em>the</em> song》&nbsp;</span>s
+<span class="song_name"><em>baby</em> <em>one</em> <em>more</em> <em>time</em>  </span><span class="file_size">1.0M</span> <span class="song_special"><strong>小甜甜<em>布兰妮</em></strong><strong><em>britney</em></strong><strong><em>spears</em></strong>《<em>baby</em> <em>one</em> <em>more</em> <em>time</em>》&nbsp;</span>
+<span class="song_name">revelation  <em>1</em> <em>001</em></span><span class="file_size">36.0M</span> <span class="song_special">《revelation》&nbsp;</span>  </a> </li>
+//url里的中文
+C# Url传递中文 转义编码
+2010-02-05 10:38
+百度的编码 
+System.Web.HttpUtility.UrlEncode( "中文 ", System.Text.UnicodeEncoding.GetEncoding( "GB2312 ")).ToUpper() 
+
+Google的编码 System.Web.HttpUtility.UrlEncode( "中文 ") 得到值 System.Web.HttpUtility.UrlDecode( "%BA%AB%B9%FA%D3%EF%D1%A7%CF%B0%D7%CA%C1%CF ", System.Text.UnicodeEncoding.GetEncoding( "GB2312 "))
+
+HttpUtility.UrlEncode("花海", System.Text.Encoding.GetEncoding("GB2312"));
+
+//专辑图
+http://mp3.baidu.com/albumlist/周杰伦;;;;;;七里香.html
+<p><img src="http://imgs.zhangmen.baidu.com/ssaimg/2/2078.jpg" width="150" height="150"/></p>
+
+//C＃中怎样取路径中的文件名？
+你想要的是这句：
+string FileName = FullFileName.Substring(FullFileName.LastIndexOf("\\") + 1);//最后一个\后的数据
+
+比如你的路径是：E:\download\Asp.net\Msystem\upload.aspx
+那上面的例子得到的就是upload.aspx；
+如果是
+string FileName = path.Substring(FullFileName.LastIndexOf(".") + 1);
+得到的就是aspx
+这样说你应该明白吧？
+希望对你有所帮助。
+
+EA76FA02AD35B4A9E0B4646D26C5B48C
+819, 358
+849, 458
+
+<td class="ablum"><a href="#" onclick="soso.srhKeyWord(this);g_stat.submitSearchResultForEng(this);return false;" title="魔杰座(内地版)">魔杰座(内地版)</a></td>
+
+
+<td class="ablum"><a href="http://music.soso.com/portal/albumn/62/albumn_660014762.html" onclick="g_stat.submitSearchResultForEng(this);" title="魔杰座">魔杰座</a></td>

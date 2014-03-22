@@ -1,0 +1,111 @@
+using System.Net; 
+using System.IO; 
+using System.Text.RegularExpressions; 
+private string getHtml(string url, string charSet)//url是要访问的网站地址，charSet是目标网页的编码，如果传入的是null或者""，那就自动分析网页的编码 
+{ 
+WebClient myWebClient = new WebClient(); //创建WebClient实例myWebClient 
+// 需要注意的： 
+//有的网页可能下不下来，有种种原因比如需要cookie,编码问题等等 
+//这是就要具体问题具体分析比如在头部加入cookie 
+// webclient.Headers.Add("Cookie", cookie); 
+//这样可能需要一些重载方法。根据需要写就可以了 
+
+//获取或设置用于对向 Internet 资源的请求进行身份验证的网络凭据。 
+myWebClient.Credentials = CredentialCache.DefaultCredentials; 
+//如果服务器要验证用户名,密码 
+//NetworkCredential mycred = new NetworkCredential(struser, strpassword); 
+//myWebClient.Credentials = mycred; 
+//从资源下载数据并返回字节数组。（加@是因为网址中间有"/"符号） 
+byte[] myDataBuffer = myWebClient.DownloadData(url); 
+string strWebData = Encoding.Default.GetString(myDataBuffer); 
+
+//获取网页字符编码描述信息 
+Match charSetMatch = Regex.Match(strWebData, "<meta([^<]*)charset=([^<]*)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline); 
+string webCharSet = charSetMatch.Groups[2].Value; 
+if (charSet == null || charSet == "") 
+charSet = webCharSet; 
+
+if (charSet != null && charSet != "" && Encoding.GetEncoding(charSet) != Encoding.Default) 
+strWebData = Encoding.GetEncoding(charSet).GetString(myDataBuffer); 
+return strWebData; 
+}
+using System.Net;
+using System.IO;
+using System.Text.RegularExpressions;
+private string getHtml(string url, string charSet)//url是要访问的网站地址，charSet是目标网页的编码，如果传入的是null或者""，那就自动分析网页的编码
+{
+WebClient myWebClient = new WebClient(); //创建WebClient实例myWebClient
+// 需要注意的：
+//有的网页可能下不下来，有种种原因比如需要cookie,编码问题等等
+//这是就要具体问题具体分析比如在头部加入cookie
+// webclient.Headers.Add("Cookie", cookie);
+//这样可能需要一些重载方法。根据需要写就可以了
+
+//获取或设置用于对向 Internet 资源的请求进行身份验证的网络凭据。
+myWebClient.Credentials = CredentialCache.DefaultCredentials;
+//如果服务器要验证用户名,密码
+//NetworkCredential mycred = new NetworkCredential(struser, strpassword);
+//myWebClient.Credentials = mycred;
+//从资源下载数据并返回字节数组。（加@是因为网址中间有"/"符号）
+byte[] myDataBuffer = myWebClient.DownloadData(url);
+string strWebData = Encoding.Default.GetString(myDataBuffer);
+
+//获取网页字符编码描述信息
+Match charSetMatch = Regex.Match(strWebData, "<meta([^<]*)charset=([^<]*)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+string webCharSet = charSetMatch.Groups[2].Value;
+if (charSet == null || charSet == "")
+charSet = webCharSet;
+
+if (charSet != null && charSet != "" && Encoding.GetEncoding(charSet) != Encoding.Default)
+strWebData = Encoding.GetEncoding(charSet).GetString(myDataBuffer);
+return strWebData;
+}
+
+必须承认，这程序目前还有不少不够完善的地方，
+
+更新，肯定得更新
+
+在这里，就算写下以后的计划吧
+
+1.加强信息匹配能力
+
+2.专辑图多源收集，现在专辑图来源于百度的专辑信
+
+息，图又少又小，如果你有好的专辑图下载站点，或
+
+者您是正则表达式和源码脚本分析的高手，请您赶快
+
+联系我呀O(∩_∩)O~~。
+
+3.优化线程关系及稳定性。如果您遇到bug了，请您
+
+联系我。
+
+
+首先很欣慰你打开了"关于"，本来这东东写来自己用
+
+的，后来想想好东西（晕，自己用的都不顺）应该分
+
+享给大家用，这一来工作量就翻了一倍，弄这弄那搞
+
+了太久，如今终于出来现在你看到的程序。
+
+累，是我现在对于VS的唯一感受。不过，大家用的开
+
+心，我也就不累了。
+
+程序还不够完善，后续还有好多活，过两天我也要上
+
+学了，大家就将就用一下吧。
+说实话，这程序还不太成熟，更新是肯定的
+这是我第一次接触C#写的程序，写得不好，还望包涵。如果你发现bug，请与我联系，联系方式请见关于\n值得一提的是，歌曲信息的匹配成功与否很大程度取决于文件名是否规范(不用看了，两面对两面，不是病句...\n但是, 尽管文件名很规范, 还是会有可能找不到匹配的信息或专辑图, 可能这时有人开始问候显示器母亲了....\n没办法，信息是来自于百度的MP3搜索，如果你知道更好的搜索网站或专辑图下载站，请联系我，我感激不尽。\n好了，就写到这。
+
+http://www.szxhsw.com/tip.php?action=gxsm
+
+http://www.szxhsw.com/tip.php?action=getdownsite
+
+http://www.szxhsw.com/tip.php?action=getversion
+
+getdownpage
+
+gxfs//更新方式，1为打开页面，2为从url下载
